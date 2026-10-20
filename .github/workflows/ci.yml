@@ -33,3 +33,10 @@ jobs:
       - name: Run Windows CI script
         if: runner.os == 'Windows'
         run: .\ci.bat
+
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-${{ matrix.os }}
+          path: target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}
+          if-no-files-found: error

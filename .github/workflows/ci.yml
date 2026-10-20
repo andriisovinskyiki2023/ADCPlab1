@@ -1,0 +1,35 @@
+name: Rust CI
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run Unix CI script
+        if: runner.os != 'Windows'
+        run: ./ci.sh
+
+      - name: Run Windows CI script
+        if: runner.os == 'Windows'
+        run: .\ci.bat

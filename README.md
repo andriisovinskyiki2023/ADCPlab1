@@ -71,5 +71,7 @@ cargo run
 ```
 
 Очікуваний вивід — `Hello, world!`. GitHub Actions автоматично запускає
-`cargo test` на Ubuntu, Windows і macOS.
-
+локальні CI-скрипти на Ubuntu, Windows і macOS. Після release-збірки кожна
+job завантажує artifact `rust-binaries-<os>` з каталогу `target/release/`.
+Artifact містить виконавчий файл відповідної платформи; якщо release-файла
+немає, workflow завершується помилкою.

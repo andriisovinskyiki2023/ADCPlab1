@@ -29,7 +29,12 @@ agent: "Build Engineer AI Agent"
 7. `ci.yml` не містить прямих викликів `cargo`;
 8. `target/` не відстежується Git;
 9. `cargo test` завершується успішно;
-10. `cargo run` завершується успішно та виводить `Hello`.
+10. `cargo build --release` завершується успішно та створює виконавчий файл
+    у `target/release/`;
+11. `ci.yml` містить `actions/upload-artifact@v4` після запуску CI-скрипта;
+12. artifact у `ci.yml` має шлях `target/release/`, унікальне ім'я для
+    матричної ОС та `if-no-files-found: error`;
+13. `cargo run` завершується успішно та виводить `Hello`.
 
 Заверши команду ненульовим кодом, якщо будь-який пункт має `FAIL`.
 
@@ -65,6 +70,18 @@ FAIL ci-yaml: ...
 git check-ignore -q target/
 ```
 
+Для artifact перевір за допомогою YAML-парсера, а не лише пошуком тексту:
+
+- існує крок `uses: actions/upload-artifact@v4`;
+- він розташований після кроків запуску `ci.sh`/`ci.bat`;
+- `name` містить `${{ matrix.os }}`;
+- `path` дорівнює `target/release/`;
+- `if-no-files-found` дорівнює `error`.
+
+Після `cargo build --release` перевір наявність виконавчого файла в
+`target/release/` (`<package-name>.exe` на Windows або файл без розширення на
+Unix). Відсутність файла — `FAIL`, навіть якщо `cargo test` успішний.
+
 ## Повідомлення про помилки
 
 ```text
@@ -78,4 +95,3 @@ FAIL <пункт>: <точна причина>
 
 Команда є read-only: не створює, не перезаписує та не виправляє файли.
 Повторний запуск виконує ті самі перевірки й формує зіставний звіт.
-

@@ -41,9 +41,8 @@ Skills є спеціалізованими етапами, а не незале�
 ### Commands
 
 Локальні `ci.sh` і `ci.bat` є явними командами відтворення build-and-test
-етапу. Вони послідовно запускають `cargo fmt --check`, `cargo check`,
-`cargo build` і `cargo test`. Окремі Cargo-команди залишаються доступними
-для діагностики конкретного збою.
+етапу. Вони виконують release-збірку та тести. Окремі Cargo-команди
+залишаються доступними для діагностики конкретного збою.
 
 ### Orchestrator
 
@@ -93,7 +92,9 @@ Inspect -> Scaffold -> Build and test -> CI setup -> Verify
 
 `.github/workflows/ci.yml` використовує матрицю `ubuntu-latest`,
 `windows-latest` і `macos-latest`. Для кожної платформи workflow встановлює
-stable Rust toolchain, кешує Cargo-залежності та запускає `cargo test`.
-Таким чином, локальні скрипти перевіряють ті самі базові властивості, що й
-віддалений CI, а матриця виявляє платформні розбіжності.
-
+stable Rust toolchain і запускає відповідний локальний скрипт. Після
+успішного скрипта крок `actions/upload-artifact@v4` зберігає
+`target/release/` під унікальним ім'ям `rust-binaries-${{ matrix.os }}`.
+Параметр `if-no-files-found: error` не дозволяє успішному запуску створити
+порожній artifact. У результатах workflow доступні release-виконавчі файли
+кожної платформи.

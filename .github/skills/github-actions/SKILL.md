@@ -58,14 +58,12 @@ Workflow має запускати **ВИКЛЮЧНО** `ci.sh` або `ci.bat` 
 результат через `actions/upload-artifact@v4`. Крок завантаження має:
 
 - виконуватися після кроку запуску CI-скрипта;
-- мати унікальне ім'я на основі ОС, наприклад
-  `rust-binaries-${{ matrix.os }}`;
-- завантажувати `target/release/`;
+- мати ім'я `hello-${{ matrix.os }}`;
+- завантажувати release-виконуваний файл із платформним суфіксом:
+  `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}`;
 - містити `if-no-files-found: error`, щоб порожній artifact був помилкою.
 
-У завантаженому каталозі має бути виконавчий файл Cargo-пакета
-(`target/release/<package-name>` на Unix або
-`target/release/<package-name>.exe` на Windows).
+У завантаженому artifact має бути виконавчий файл Cargo-пакета.
 
 ## Покрокові дії
 
@@ -94,18 +92,20 @@ Workflow має запускати **ВИКЛЮЧНО** `ci.sh` або `ci.bat` 
 7. Додай після цих умовних кроків спільний крок завантаження:
 
    ```yaml
-   - name: Upload release binaries
+   - name: Upload release binary
      uses: actions/upload-artifact@v4
      with:
-       name: rust-binaries-${{ matrix.os }}
-       path: target/release/
+       name: hello-${{ matrix.os }}
+       path: target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}
        if-no-files-found: error
    ```
 
-8. Перевір, що в `ci.yml` немає рядків `cargo test`, `cargo build` або
+8. Якщо наявний `ci.yml` уже відповідає цим вимогам, не змінюй його.
+   Інакше перевір, що в `ci.yml` немає рядків `cargo test`, `cargo build` або
    інших прямих викликів Cargo.
-9. Перевір, що artifact налаштований для кожної матричної ОС і містить
-   release-виконавчий файл.
+9. Перевір, що artifact має ім'я `hello-${{ matrix.os }}`, шлях
+   `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}` і
+   містить release-виконавчий файл для кожної матричної ОС.
 10. Передай оркестратору перелік CI-файлів, artifact-параметри та результати
     локальної перевірки.
 
@@ -121,7 +121,8 @@ Workflow має запускати **ВИКЛЮЧНО** `ci.sh` або `ci.bat` 
    `.\ci.bat`;
 6. у `ci.yml` немає прямих викликів `cargo`;
 7. є `actions/upload-artifact@v4` після CI-скрипта;
-8. artifact має унікальне ім'я для матричної ОС, шлях `target/release/` і
+8. artifact має ім'я `hello-${{ matrix.os }}`, шлях
+   `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}` і
    `if-no-files-found: error`;
 9. release-каталог містить виконавчий файл для поточної ОС.
 
@@ -155,5 +156,7 @@ Workflow має запускати **ВИКЛЮЧНО** `ci.sh` або `ci.bat` 
   `errorlevel` після кожної команди та поверни ненульовий код.
 - **Workflow не знаходить скрипт.** Переконайся, що `run` виконується з
   кореня репозиторію та використовує `./ci.sh` або `.\ci.bat`.
+- **Наявний workflow уже відповідає вимогам.** Не перезаписуй і не
+  рефакторь `ci.yml`; залиш його без змін.
 - **Скрипти відсутні в develop.** Це очікувано до `/init`; створюй їх лише
   у feature-гілці за вимогою цього skill.

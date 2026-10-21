@@ -94,7 +94,8 @@ Inspect -> Scaffold -> Build and test -> CI setup -> Verify
 `windows-latest` і `macos-latest`. Для кожної платформи workflow встановлює
 stable Rust toolchain і запускає відповідний локальний скрипт. Після
 успішного скрипта крок `actions/upload-artifact@v4` зберігає
-`target/release/` під унікальним ім'ям `rust-binaries-${{ matrix.os }}`.
-Параметр `if-no-files-found: error` не дозволяє успішному запуску створити
-порожній artifact. У результатах workflow доступні release-виконавчі файли
-кожної платформи.
+файл `target/release/hello` (`hello.exe` на Windows) під ім'ям
+`hello-${{ matrix.os }}`: `hello-ubuntu-latest`, `hello-windows-latest` або
+`hello-macos-latest`. Параметр `if-no-files-found: error` не дозволяє
+успішному запуску створити порожній artifact. У результатах workflow
+доступний release-виконуваний файл відповідної платформи.

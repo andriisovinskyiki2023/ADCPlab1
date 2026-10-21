@@ -52,9 +52,10 @@ production-збірку, а `cargo run` запускає програму. Пі�
 ## Артефакти GitHub Actions
 
 Workflow запускає локальний CI-скрипт на кожній ОС, а потім завантажує
-`target/release/` через `actions/upload-artifact@v4`. Артефакти мають імена
-`rust-binaries-ubuntu-latest`, `rust-binaries-windows-latest` та
-`rust-binaries-macos-latest` і містять виконавчий файл відповідної платформи.
+файл `target/release/hello` (`hello.exe` на Windows) через
+`actions/upload-artifact@v4`. Артефакти мають імена
+`hello-ubuntu-latest`, `hello-windows-latest` та `hello-macos-latest` і
+містять один виконавчий файл відповідної платформи.
 Параметр `if-no-files-found: error` робить відсутність release-виконавця
 помилкою workflow, тому порожній блок Artifacts не може бути помилково
 прийнятий за успішну збірку.

@@ -72,6 +72,7 @@ cargo run
 
 Очікуваний вивід — `Hello, world!`. GitHub Actions автоматично запускає
 локальні CI-скрипти на Ubuntu, Windows і macOS. Після release-збірки кожна
-job завантажує artifact `rust-binaries-<os>` з каталогу `target/release/`.
-Artifact містить виконавчий файл відповідної платформи; якщо release-файла
-немає, workflow завершується помилкою.
+job завантажує artifact `hello-${{ matrix.os }}` — відповідно
+`hello-ubuntu-latest`, `hello-windows-latest` або `hello-macos-latest`.
+Artifact містить один файл `target/release/hello` (`hello.exe` на Windows);
+якщо цей файл відсутній, workflow завершується помилкою.

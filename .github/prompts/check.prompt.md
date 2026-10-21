@@ -32,8 +32,8 @@ agent: "Build Engineer AI Agent"
 10. `cargo build --release` завершується успішно та створює виконавчий файл
     у `target/release/`;
 11. `ci.yml` містить `actions/upload-artifact@v4` після запуску CI-скрипта;
-12. artifact у `ci.yml` має шлях `target/release/` або конкретний release-файл
-    усередині цього каталогу, унікальне ім'я для матричної ОС та
+12. artifact у `ci.yml` має ім'я `hello-${{ matrix.os }}`, шлях
+    `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}` та
     `if-no-files-found: error`;
 13. `cargo run` завершується успішно та виводить `Hello`.
 
@@ -75,9 +75,9 @@ git check-ignore -q target/
 
 - існує крок `uses: actions/upload-artifact@v4`;
 - він розташований після кроків запуску `ci.sh`/`ci.bat`;
-- `name` містить `${{ matrix.os }}`;
-- `path` дорівнює `target/release/` або вказує на конкретний файл усередині
-  `target/release/` (наприклад, `target/release/<package-name>.exe`);
+- `name` дорівнює `hello-${{ matrix.os }}`;
+- `path` дорівнює
+  `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}`;
 - `if-no-files-found` дорівнює `error`.
 
 Після `cargo build --release` перевір наявність виконавчого файла в

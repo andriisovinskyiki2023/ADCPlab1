@@ -23,9 +23,11 @@ agent: "Build Engineer AI Agent"
 6. Не додавай прямих викликів `cargo` у `ci.yml`.
 7. Налаштуй тригери `push` і `pull_request` для гілок `develop` і `master`.
 8. Після запуску CI-скрипта додай `actions/upload-artifact@v4`:
-   `name: rust-binaries-${{ matrix.os }}`,
-   `path: target/release/` та `if-no-files-found: error`.
+   `name: hello-${{ matrix.os }}`,
+   `path: target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}`
+   та `if-no-files-found: error`.
 9. Переконайся, що artifact містить release-виконавчий файл для кожної ОС.
+   Якщо наявний `ci.yml` уже відповідає всім цим вимогам, не змінюй його.
 
 ## Очікувані файли
 
@@ -33,7 +35,8 @@ agent: "Build Engineer AI Agent"
 - `ci.bat` з `cargo build --release` і `cargo test`.
 - `.github/workflows/ci.yml` з однією job і трьома ОС.
 - `.github/workflows/ci.yml` із кроком `actions/upload-artifact@v4`, який
-  зберігає `target/release/` під унікальним ім'ям для кожної ОС.
+  зберігає `target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}`
+  під ім'ям `hello-${{ matrix.os }}`.
 
 ## Команди перевірки
 
@@ -49,7 +52,8 @@ agent: "Build Engineer AI Agent"
 
 Статично перевір: одну job, три runner-и, умови запуску скриптів, відсутність
 прямих `cargo`-викликів у workflow, крок `actions/upload-artifact@v4`,
-`path: target/release/`, унікальне ім'я artifact та
+`name: hello-${{ matrix.os }}`, шлях
+`target/release/hello${{ runner.os == 'Windows' && '.exe' || '' }}` та
 `if-no-files-found: error`.
 
 ## Повідомлення про помилки
@@ -64,5 +68,6 @@ FAIL create-actions: <файл або перевірка> завершилися
 ## Ідемпотентність
 
 Не перезаписуй наявні заповнені скрипти чи workflow без потреби. Перед
-зміною перевір їхню структуру; додавай відсутні налаштування лише один раз і
-не дублюй job, matrix, triggers або кроки.
+зміною перевір їхню структуру; якщо наявний `ci.yml` уже відповідає
+вимогам, не змінюй його. Додавай відсутні налаштування лише один раз і не
+дублюй job, matrix, triggers або кроки.
